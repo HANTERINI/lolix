@@ -463,3 +463,59 @@ body {
         font-size: 13px;
     }
 }
+
+
+/* Header Icon Button Fixes */
+.header-actions .btn-icon {
+    font-size: 16px;
+    display: inline-block;
+}
+.header-actions .btn-text {
+    display: inline-block;
+}
+
+@media (max-width: 900px) {
+    .header-actions .btn-text {
+        display: none !important;
+    }
+    .header-actions .btn-icon {
+        display: inline-block !important;
+        font-size: 16px;
+        line-height: 1;
+    }
+    .header-actions .btn {
+        min-width: 38px;
+        height: 38px;
+        padding: 0 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Tabs Bar Touch Scroll Fix */
+    .sidebar-tabs {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding: 6px 4px !important;
+    }
+    .sidebar-tabs::-webkit-scrollbar {
+        display: none;
+    }
+    .tab-btn {
+        flex: 0 0 auto !important;
+        min-width: 58px !important;
+        padding: 6px 4px !important;
+        font-size: 10px !important;
+    }
+
+    .tab-content {
+        padding: 12px 10px 40px 10px !important;
+    }
+    .upload-zone {
+        margin-top: 4px !important;
+        padding: 14px 10px !important;
+    }
+}
