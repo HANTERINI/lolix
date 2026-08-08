@@ -37,22 +37,18 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     let zoomLevel = 1.0;
-
-    # Drag & Resize Interaction States
+    // Drag & Resize Interaction States
     let isDragging = false;
     let isResizing = false;
     let dragOffsetX = 0;
     let dragOffsetY = 0;
     let resizeStartSize = 48;
     let resizeStartDist = 1;
-
-    # Touch Pointer Tracker for Pinch Gestures
+    // Touch Pointer Tracker for Pinch Gestures
     const activePointers = new Map();
-
-    # Default Templates Catalog
+    // Default Templates Catalog
     let fetchedMemes = typeof MEME_PRESETS !== 'undefined' ? [...MEME_PRESETS] : [];
-
-    # --- Initialization ---
+    // --- Initialization ---
     init();
 
     async function init() {
@@ -69,8 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
             selectTemplate(fetchedMemes[0]);
         }
     }
-
-    # --- Tab Navigation ---
+    // --- Tab Navigation ---
     function setupTabs() {
         const tabBtns = document.querySelectorAll('.tab-btn');
         const tabContents = document.querySelectorAll('.tab-content');
@@ -289,8 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
         lines.push(currentLine);
         return lines;
     }
-
-    # --- Render Canvas Engine ---
+    // --- Render Canvas Engine ---
     function renderCanvas() {
         if (!isImageLoaded) return;
 
@@ -390,8 +384,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.fillText(layer.value, 0, 0);
         ctx.restore();
     }
-
-    # Bounding Box with Resizing Handle Controls
+    // Bounding Box with Resizing Handle Controls
     function getLayerBounds(layer) {
         let width = 200;
         let height = layer.fontSize * 1.2;
@@ -422,18 +415,15 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.translate(layer.x, layer.y);
 
         const { width, height } = getLayerBounds(layer);
-
-        # Dashed bounding box
+    // Dashed bounding box
         ctx.strokeStyle = '#8b5cf6';
         ctx.lineWidth = 2;
         ctx.setLineDash([6, 6]);
         ctx.strokeRect(-width / 2, -height / 2, width, height);
-
-        # 4 Interactive Corner Handles for Drag Resizing
+    // 4 Interactive Corner Handles for Drag Resizing
         ctx.setLineDash([]);
         const handleSize = 14;
-        
-        # Corner Positions
+    // Corner Positions
         const corners = [
             { x: -width / 2, y: -height / 2 },
             { x: width / 2, y: -height / 2 },
@@ -453,8 +443,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         ctx.restore();
     }
-
-    # --- Mouse & Pointer Events with Direct Drag Resizing ---
+    // --- Mouse & Pointer Events with Direct Drag Resizing ---
     canvas.addEventListener('pointerdown', (e) => {
         canvas.setPointerCapture(e.pointerId);
         activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
@@ -471,8 +460,7 @@ document.addEventListener('DOMContentLoaded', () => {
             currentPath = [{ x: mouseX, y: mouseY }];
             return;
         }
-
-        # Check Corner Resize Handle Hit on Active Layer
+    // Check Corner Resize Handle Hit on Active Layer
         if (activeLayerId) {
             const activeLayer = layers.find(l => l.id === activeLayerId);
             if (activeLayer) {
@@ -489,8 +477,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         }
-
-        # Hit Test for Layer Dragging Selection
+    // Hit Test for Layer Dragging Selection
         let foundLayer = null;
         for (let i = layers.length - 1; i >= 0; i--) {
             const l = layers[i];
@@ -532,8 +519,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const mouseX = (e.clientX - rect.left) * scaleX;
         const mouseY = (e.clientY - rect.top) * scaleY;
-
-        # Multi-touch Pinch Gesture for Resizing Layer or Canvas
+    // Multi-touch Pinch Gesture for Resizing Layer or Canvas
         if (activePointers.size === 2) {
             const points = Array.from(activePointers.values());
             const currentDist = Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y);
@@ -600,8 +586,7 @@ document.addEventListener('DOMContentLoaded', () => {
         isDragging = false;
         isResizing = false;
     });
-
-    # --- Stickers Catalog Rendering ---
+    // --- Stickers Catalog Rendering ---
     function renderStickersCatalog() {
         const grid = document.getElementById('stickerGrid');
         if (!grid || typeof STICKERS_CATALOG === 'undefined') return;
@@ -915,8 +900,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }
-
-        # Export PNG Download
+    // Export PNG Download
         const downloadBtn = document.getElementById('downloadMemeBtn');
         if (downloadBtn) {
             downloadBtn.addEventListener('click', () => {
@@ -941,8 +925,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderCanvas();
             });
         }
-
-        # Web Share API
+    // Web Share API
         const shareBtn = document.getElementById('shareMemeBtn');
         if (shareBtn) {
             shareBtn.addEventListener('click', async () => {
@@ -976,8 +959,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderCanvas();
             });
         }
-
-        # Copy Image to Clipboard
+    // Copy Image to Clipboard
         const copyBtn = document.getElementById('copyClipboardBtn');
         if (copyBtn) {
             copyBtn.addEventListener('click', async () => {
@@ -1005,8 +987,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderCanvas();
             });
         }
-
-        # Gallery Modal
+    // Gallery Modal
         const galleryBtn = document.getElementById('openGalleryBtn');
         const galleryModal = document.getElementById('galleryModal');
         const closeGalleryBtn = document.getElementById('closeGalleryModal');
@@ -1038,8 +1019,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 galleryModal.classList.remove('active');
             });
         }
-
-        # Zoom & Canvas View Controls
+    // Zoom & Canvas View Controls
         const zoomInBtn = document.getElementById('zoomInBtn');
         const zoomOutBtn = document.getElementById('zoomOutBtn');
         const resetViewBtn = document.getElementById('resetViewBtn');
