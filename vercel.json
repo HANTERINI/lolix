@@ -1,11 +1,6 @@
 {
   "version": 2,
   "name": "meme-craft-pro",
-  "cleanUrls": true,
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
-    }
-  ]
+  "outputDirectory": ".",
+  "cleanUrls": true
 }
