@@ -1,5 +1,5 @@
 /**
- * Meme Generator Pro - Main Application Logic
+ * Meme Generator Pro - Showcase Edition (Final Release)
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -38,15 +38,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let zoomLevel = 1.0;
 
-    // Interaction Dragging State
+    # Drag & Resize Interaction States
     let isDragging = false;
+    let isResizing = false;
     let dragOffsetX = 0;
     let dragOffsetY = 0;
+    let resizeStartSize = 48;
+    let resizeStartDist = 1;
 
-    // Default Templates Catalog
+    # Touch Pointer Tracker for Pinch Gestures
+    const activePointers = new Map();
+
+    # Default Templates Catalog
     let fetchedMemes = typeof MEME_PRESETS !== 'undefined' ? [...MEME_PRESETS] : [];
 
-    // --- Initialization ---
+    # --- Initialization ---
     init();
 
     async function init() {
@@ -56,19 +62,15 @@ document.addEventListener('DOMContentLoaded', () => {
         renderStickersCatalog();
         setupEventListeners();
         
-        // Render initial local templates first
         renderTemplatesGrid(fetchedMemes);
-
-        // Fetch live Imgflip memes asynchronously
         await loadImgflipMemes();
         
-        // Load default first template (Drake)
         if (fetchedMemes.length > 0) {
             selectTemplate(fetchedMemes[0]);
         }
     }
 
-    // --- Tab Navigation ---
+    # --- Tab Navigation ---
     function setupTabs() {
         const tabBtns = document.querySelectorAll('.tab-btn');
         const tabContents = document.querySelectorAll('.tab-content');
@@ -87,7 +89,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Category & Search Filtering ---
     function setupCategoryFilters() {
         const catBtns = document.querySelectorAll('.cat-btn');
         catBtns.forEach(btn => {
@@ -122,7 +123,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderTemplatesGrid(filtered);
     }
 
-    // --- Fetch Imgflip API Memes ---
     async function loadImgflipMemes() {
         try {
             const response = await fetch('https://api.imgflip.com/get_memes');
@@ -191,7 +191,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const dimEl = document.getElementById('canvasDimensions');
             if (dimEl) dimEl.textContent = `${canvas.width} x ${canvas.height} px`;
 
-            // Reset text & sticker layers with unique template text
             const memeText = meme.defaultText || (typeof getMemeDefaultText === 'function' ? getMemeDefaultText(meme.id, meme.name) : ["ВЕРХНИЙ ТЕКСТ", "НИЖНИЙ ТЕКСТ"]);
             createDefaultTextLayers(memeText);
             
@@ -215,8 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const topText = defaults[0] || "";
         const bottomText = defaults[1] || "";
 
-        // Calculate dynamic font size relative to canvas height
-        const dynamicFontSize = Math.max(20, Math.round(canvas.height * 0.07));
+        const dynamicFontSize = Math.max(24, Math.round(canvas.height * 0.075));
         const strokeW = Math.max(2, Math.round(dynamicFontSize * 0.08));
 
         layers = [
@@ -250,7 +248,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         ];
 
-        // If there is a 3rd caption line (e.g. 3-box memes like Distracted Boyfriend or Left Exit)
         if (defaults[2]) {
             layers.push({
                 id: 'middle_layer',
@@ -273,7 +270,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderLayersList();
     }
 
-    // Multi-line Text Wrapping Helper
     function wrapText(context, text, maxWidth) {
         if (!text) return [''];
         const words = text.split(' ');
@@ -294,19 +290,17 @@ document.addEventListener('DOMContentLoaded', () => {
         return lines;
     }
 
-    // --- Render Canvas Engine ---
+    # --- Render Canvas Engine ---
     function renderCanvas() {
         if (!isImageLoaded) return;
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Apply filters & draw background
         ctx.save();
         ctx.filter = `brightness(${filters.brightness}%) contrast(${filters.contrast}%) saturate(${filters.saturate}%) sepia(${filters.sepia}%) grayscale(${filters.grayscale}%)`;
         ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
         ctx.restore();
 
-        // Draw User Brush Drawings
         drawings.forEach(path => {
             if (!path.points || path.points.length < 2) return;
             ctx.save();
@@ -323,7 +317,6 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.restore();
         });
 
-        // Draw Current Active Path
         if (currentPath.length > 1) {
             ctx.save();
             ctx.strokeStyle = brushSettings.color;
@@ -339,7 +332,6 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.restore();
         }
 
-        // Draw Layers (Text & Stickers)
         layers.forEach(layer => {
             if (layer.type === 'text') {
                 drawTextLayer(layer);
@@ -348,7 +340,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Draw Selection Bounding Box around Active Layer
         if (activeLayerId) {
             const activeLayer = layers.find(l => l.id === activeLayerId);
             if (activeLayer) {
@@ -364,7 +355,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const displayText = layer.isUppercase ? layer.text.toUpperCase() : layer.text;
         ctx.font = `900 ${layer.fontSize}px "${layer.fontFamily}", sans-serif`;
         
-        // Auto wrap text to canvas width bounds
         const maxWidth = canvas.width * 0.92;
         const lines = wrapText(ctx, displayText, maxWidth);
         const lineHeight = layer.fontSize * 1.15;
@@ -377,7 +367,6 @@ document.addEventListener('DOMContentLoaded', () => {
         lines.forEach((line, index) => {
             const curY = startY + index * lineHeight;
 
-            // Draw Stroke (Outline)
             if (layer.strokeWidth > 0) {
                 ctx.strokeStyle = layer.strokeColor;
                 ctx.lineWidth = Math.min(layer.strokeWidth * 2, layer.fontSize * 0.2);
@@ -385,7 +374,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 ctx.strokeText(line, 0, curY);
             }
 
-            // Draw Fill
             ctx.fillStyle = layer.textColor;
             ctx.fillText(line, 0, curY);
         });
@@ -403,10 +391,8 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.restore();
     }
 
-    function drawSelectionBox(layer) {
-        ctx.save();
-        ctx.translate(layer.x, layer.y);
-
+    # Bounding Box with Resizing Handle Controls
+    function getLayerBounds(layer) {
         let width = 200;
         let height = layer.fontSize * 1.2;
 
@@ -425,28 +411,54 @@ document.addEventListener('DOMContentLoaded', () => {
             width = maxLineWidth + 24;
             height = Math.max(layer.fontSize * 1.2, lines.length * layer.fontSize * 1.15 + 16);
         } else if (layer.type === 'sticker') {
-            width = layer.fontSize * 1.2;
-            height = layer.fontSize * 1.2;
+            width = layer.fontSize * 1.3;
+            height = layer.fontSize * 1.3;
         }
+        return { width, height };
+    }
 
-        // Dashed bounding box
+    function drawSelectionBox(layer) {
+        ctx.save();
+        ctx.translate(layer.x, layer.y);
+
+        const { width, height } = getLayerBounds(layer);
+
+        # Dashed bounding box
         ctx.strokeStyle = '#8b5cf6';
         ctx.lineWidth = 2;
         ctx.setLineDash([6, 6]);
         ctx.strokeRect(-width / 2, -height / 2, width, height);
 
-        // Corner handles
+        # 4 Interactive Corner Handles for Drag Resizing
         ctx.setLineDash([]);
-        ctx.fillStyle = '#06b6d4';
-        const handleSize = 10;
-        ctx.fillRect(-width / 2 - handleSize / 2, -height / 2 - handleSize / 2, handleSize, handleSize);
-        ctx.fillRect(width / 2 - handleSize / 2, height / 2 - handleSize / 2, handleSize, handleSize);
+        const handleSize = 14;
+        
+        # Corner Positions
+        const corners = [
+            { x: -width / 2, y: -height / 2 },
+            { x: width / 2, y: -height / 2 },
+            { x: -width / 2, y: height / 2 },
+            { x: width / 2, y: height / 2 } # Primary resize handle
+        ];
+
+        corners.forEach((c, idx) => {
+            ctx.fillStyle = idx === 3 ? '#ec4899' : '#06b6d4';
+            ctx.beginPath();
+            ctx.arc(c.x, c.y, handleSize / 2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        });
 
         ctx.restore();
     }
 
-    // --- Interactive Mouse & Pointer Events ---
+    # --- Mouse & Pointer Events with Direct Drag Resizing ---
     canvas.addEventListener('pointerdown', (e) => {
+        canvas.setPointerCapture(e.pointerId);
+        activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
         const rect = canvas.getBoundingClientRect();
         const scaleX = canvas.width / rect.width;
         const scaleY = canvas.height / rect.height;
@@ -460,14 +472,30 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Check layer hit test
+        # Check Corner Resize Handle Hit on Active Layer
+        if (activeLayerId) {
+            const activeLayer = layers.find(l => l.id === activeLayerId);
+            if (activeLayer) {
+                const bounds = getLayerBounds(activeLayer);
+                const handleX = activeLayer.x + bounds.width / 2;
+                const handleY = activeLayer.y + bounds.height / 2;
+                const distToResizeHandle = Math.hypot(mouseX - handleX, mouseY - handleY);
+
+                if (distToResizeHandle < 30) {
+                    isResizing = true;
+                    resizeStartSize = activeLayer.fontSize;
+                    resizeStartDist = Math.hypot(mouseX - activeLayer.x, mouseY - activeLayer.y);
+                    return;
+                }
+            }
+        }
+
+        # Hit Test for Layer Dragging Selection
         let foundLayer = null;
         for (let i = layers.length - 1; i >= 0; i--) {
             const l = layers[i];
-            const dx = mouseX - l.x;
-            const dy = mouseY - l.y;
-            const size = l.fontSize * 1.2;
-            if (Math.abs(dx) < size * 2.5 && Math.abs(dy) < size * 1.5) {
+            const bounds = getLayerBounds(l);
+            if (Math.abs(mouseX - l.x) < bounds.width / 2 + 10 && Math.abs(mouseY - l.y) < bounds.height / 2 + 10) {
                 foundLayer = l;
                 break;
             }
@@ -479,8 +507,7 @@ document.addEventListener('DOMContentLoaded', () => {
             dragOffsetX = mouseX - foundLayer.x;
             dragOffsetY = mouseY - foundLayer.y;
             updateInspectorPanel(foundLayer);
-            
-            // On mobile screen (< 900px), automatically switch to Properties tab when tapping a layer
+
             if (window.innerWidth <= 900) {
                 const propsTab = document.getElementById('mobilePropsTab');
                 if (propsTab && !propsTab.classList.contains('active')) {
@@ -496,6 +523,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     canvas.addEventListener('pointermove', (e) => {
+        if (!activePointers.has(e.pointerId)) return;
+        activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
         const rect = canvas.getBoundingClientRect();
         const scaleX = canvas.width / rect.width;
         const scaleY = canvas.height / rect.height;
@@ -503,9 +533,37 @@ document.addEventListener('DOMContentLoaded', () => {
         const mouseX = (e.clientX - rect.left) * scaleX;
         const mouseY = (e.clientY - rect.top) * scaleY;
 
+        # Multi-touch Pinch Gesture for Resizing Layer or Canvas
+        if (activePointers.size === 2) {
+            const points = Array.from(activePointers.values());
+            const currentDist = Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y);
+
+            if (activeLayerId) {
+                const activeLayer = layers.find(l => l.id === activeLayerId);
+                if (activeLayer) {
+                    activeLayer.fontSize = Math.max(14, Math.min(200, Math.round(currentDist * 0.4)));
+                    updateInspectorPanel(activeLayer);
+                    renderCanvas();
+                    return;
+                }
+            }
+        }
+
         if (isDrawingMode && isDrawing) {
             currentPath.push({ x: mouseX, y: mouseY });
             renderCanvas();
+            return;
+        }
+
+        if (isResizing && activeLayerId) {
+            const activeLayer = layers.find(l => l.id === activeLayerId);
+            if (activeLayer) {
+                const currentDist = Math.hypot(mouseX - activeLayer.x, mouseY - activeLayer.y);
+                const scaleFactor = currentDist / Math.max(1, resizeStartDist);
+                activeLayer.fontSize = Math.max(12, Math.min(200, Math.round(resizeStartSize * scaleFactor)));
+                updateInspectorPanel(activeLayer);
+                renderCanvas();
+            }
             return;
         }
 
@@ -519,7 +577,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    canvas.addEventListener('pointerup', () => {
+    canvas.addEventListener('pointerup', (e) => {
+        canvas.releasePointerCapture(e.pointerId);
+        activePointers.delete(e.pointerId);
+
         if (isDrawingMode && isDrawing) {
             isDrawing = false;
             drawings.push({
@@ -531,9 +592,16 @@ document.addEventListener('DOMContentLoaded', () => {
             renderCanvas();
         }
         isDragging = false;
+        isResizing = false;
     });
 
-    // --- Stickers Catalog Rendering ---
+    canvas.addEventListener('pointercancel', (e) => {
+        activePointers.delete(e.pointerId);
+        isDragging = false;
+        isResizing = false;
+    });
+
+    # --- Stickers Catalog Rendering ---
     function renderStickersCatalog() {
         const grid = document.getElementById('stickerGrid');
         if (!grid || typeof STICKERS_CATALOG === 'undefined') return;
@@ -565,7 +633,6 @@ document.addEventListener('DOMContentLoaded', () => {
         showToast('Стикер добавлен на мем', 'success');
     }
 
-    // --- Text Inputs Sync ---
     function updateTextInputValues() {
         const topL = layers.find(l => l.id === 'top_layer');
         const bottomL = layers.find(l => l.id === 'bottom_layer');
@@ -577,7 +644,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (bottomInput) bottomInput.value = bottomL ? bottomL.text : '';
     }
 
-    // Bind event listeners for UI buttons
     function setupEventListeners() {
         const topInput = document.getElementById('topTextInput');
         if (topInput) {
@@ -630,7 +696,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Font Family
         const fontFamilySel = document.getElementById('propFontFamily');
         if (fontFamilySel) {
             fontFamilySel.addEventListener('change', (e) => {
@@ -642,7 +707,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Font Size
         const fontSizeSlider = document.getElementById('propFontSize');
         if (fontSizeSlider) {
             fontSizeSlider.addEventListener('input', (e) => {
@@ -657,7 +721,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Text Color
         const textColorPicker = document.getElementById('propTextColor');
         if (textColorPicker) {
             textColorPicker.addEventListener('input', (e) => {
@@ -669,7 +732,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Stroke Color
         const strokeColorPicker = document.getElementById('propStrokeColor');
         if (strokeColorPicker) {
             strokeColorPicker.addEventListener('input', (e) => {
@@ -681,7 +743,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Stroke Width
         const strokeWidthSlider = document.getElementById('propStrokeWidth');
         if (strokeWidthSlider) {
             strokeWidthSlider.addEventListener('input', (e) => {
@@ -696,7 +757,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Uppercase Toggle
         const uppercaseBtn = document.getElementById('propUppercaseBtn');
         if (uppercaseBtn) {
             uppercaseBtn.addEventListener('click', () => {
@@ -708,7 +768,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Layer Ordering & Delete
         const layerUpBtn = document.getElementById('layerUpBtn');
         if (layerUpBtn) {
             layerUpBtn.addEventListener('click', () => {
@@ -751,7 +810,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Filters Sliders
         ['Brightness', 'Contrast', 'Saturate', 'Sepia', 'Grayscale'].forEach(filterName => {
             const slider = document.getElementById(`filter${filterName}`);
             const valSpan = document.getElementById(`${filterName.toLowerCase()}Val`);
@@ -765,7 +823,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Deep Fry Preset Button
         const deepFryBtn = document.getElementById('deepFryBtn');
         if (deepFryBtn) {
             deepFryBtn.addEventListener('click', () => {
@@ -776,7 +833,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Reset Filters Button
         const resetFiltersBtn = document.getElementById('resetFiltersBtn');
         if (resetFiltersBtn) {
             resetFiltersBtn.addEventListener('click', () => {
@@ -787,7 +843,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Draw Brush Controls
         const toggleDrawBtn = document.getElementById('toggleDrawBtn');
         if (toggleDrawBtn) {
             toggleDrawBtn.addEventListener('click', (e) => {
@@ -826,7 +881,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Random Funny Caption Generator
         const randomCaptionBtn = document.getElementById('randomCaptionBtn');
         if (randomCaptionBtn && typeof FUNNY_CAPTIONS !== 'undefined') {
             randomCaptionBtn.addEventListener('click', () => {
@@ -837,7 +891,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // File Upload Dropzone
         const dropzone = document.getElementById('uploadDropzone');
         const imageInput = document.getElementById('imageInput');
 
@@ -863,7 +916,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Export PNG Download
+        # Export PNG Download
         const downloadBtn = document.getElementById('downloadMemeBtn');
         if (downloadBtn) {
             downloadBtn.addEventListener('click', () => {
@@ -889,7 +942,42 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Copy Image to Clipboard
+        # Web Share API
+        const shareBtn = document.getElementById('shareMemeBtn');
+        if (shareBtn) {
+            shareBtn.addEventListener('click', async () => {
+                const tempActive = activeLayerId;
+                activeLayerId = null;
+                renderCanvas();
+
+                try {
+                    canvas.toBlob(async (blob) => {
+                        if (!blob) return;
+                        const file = new File([blob], `meme_${Date.now()}.png`, { type: 'image/png' });
+                        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                            await navigator.share({
+                                title: 'LOLIX Meme Craft Pro',
+                                text: 'Посмотри мем, который я сделал!',
+                                files: [file]
+                            });
+                            showToast('🚀 Мем успешно отправлен!', 'success');
+                        } else {
+                            await navigator.clipboard.write([
+                                new ClipboardItem({ 'image/png': blob })
+                            ]);
+                            showToast('📋 Скопировано в буфер обмена!', 'success');
+                        }
+                    });
+                } catch (err) {
+                    console.error('Share error', err);
+                }
+
+                activeLayerId = tempActive;
+                renderCanvas();
+            });
+        }
+
+        # Copy Image to Clipboard
         const copyBtn = document.getElementById('copyClipboardBtn');
         if (copyBtn) {
             copyBtn.addEventListener('click', async () => {
@@ -918,7 +1006,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Gallery Modal
+        # Gallery Modal
         const galleryBtn = document.getElementById('openGalleryBtn');
         const galleryModal = document.getElementById('galleryModal');
         const closeGalleryBtn = document.getElementById('closeGalleryModal');
@@ -951,7 +1039,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Zoom & Canvas View Controls
+        # Zoom & Canvas View Controls
         const zoomInBtn = document.getElementById('zoomInBtn');
         const zoomOutBtn = document.getElementById('zoomOutBtn');
         const resetViewBtn = document.getElementById('resetViewBtn');
@@ -994,7 +1082,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Inspector Updates
     function updateInspectorPanel(layer) {
         if (layer.type === 'text') {
             const fontSel = document.getElementById('propFontFamily');
@@ -1015,7 +1102,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Layers Manager List
     function renderLayersList() {
         const list = document.getElementById('layersList');
         if (!list) return;
