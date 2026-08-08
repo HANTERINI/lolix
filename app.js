@@ -428,7 +428,7 @@ document.addEventListener('DOMContentLoaded', () => {
             { x: -width / 2, y: -height / 2 },
             { x: width / 2, y: -height / 2 },
             { x: -width / 2, y: height / 2 },
-            { x: width / 2, y: height / 2 } # Primary resize handle
+            { x: width / 2, y: height / 2 } // Primary resize handle
         ];
 
         corners.forEach((c, idx) => {
