@@ -370,3 +370,96 @@ body {
         grid-template-columns: repeat(2, 1fr);
     }
 }
+
+/* ==========================================================================
+   MOBILE CLEAN FIX (< 900px)
+   ========================================================================== */
+
+@media (max-width: 900px) {
+    /* HIDE floating canvas toolbar on mobile so it NEVER blocks the top text of the meme */
+    .canvas-toolbar {
+        display: none !important;
+    }
+
+    /* Workspace container: clean, centered, no blocking overlays */
+    .workspace {
+        order: 1;
+        width: 100%;
+        height: auto;
+        min-height: 280px;
+        max-height: 50vh;
+        padding: 16px 12px;
+        position: relative;
+        top: 0;
+        z-index: 10;
+        border-bottom: 2px solid var(--border-color);
+        background: #05080f;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .canvas-wrapper {
+        max-height: calc(50vh - 32px);
+        max-width: 100%;
+    }
+
+    #memeCanvas {
+        max-height: calc(50vh - 32px);
+        max-width: 100%;
+        height: auto;
+        width: auto;
+        touch-action: none;
+    }
+
+    /* Tabs & Controls Drawer */
+    .sidebar {
+        order: 2;
+        width: 100%;
+        border-right: none;
+        background: var(--bg-dark);
+    }
+
+    .sidebar-tabs {
+        position: sticky;
+        top: 52px;
+        z-index: 40;
+        background: rgba(15, 23, 42, 0.98);
+        border-bottom: 1px solid var(--border-color);
+        padding: 6px 8px;
+        gap: 6px;
+        display: flex;
+        overflow-x: auto;
+    }
+
+    .tab-btn {
+        flex: 1;
+        min-width: 64px;
+        padding: 8px 4px;
+        font-size: 11px;
+    }
+
+    .tab-content {
+        padding: 16px 12px 60px 12px;
+    }
+
+    .templates-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        max-height: none;
+    }
+
+    .template-card {
+        aspect-ratio: 1;
+    }
+
+    .category-list {
+        padding-bottom: 10px;
+        margin-bottom: 10px;
+    }
+
+    .cat-btn {
+        padding: 8px 14px;
+        font-size: 13px;
+    }
+}
