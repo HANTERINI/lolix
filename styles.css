@@ -766,3 +766,144 @@ body {
     from { opacity: 0; transform: translateY(20px) scale(0.9); }
     to { opacity: 1; transform: translateY(0) scale(1); }
 }
+
+/* ==========================================================================
+   Mobile & Responsive Layout Styles (< 900px)
+   ========================================================================== */
+
+@media (max-width: 900px) {
+    body {
+        overflow-y: auto;
+    }
+
+    .app-header {
+        height: 56px;
+        padding: 0 12px;
+    }
+
+    .logo-text {
+        font-size: 16px;
+    }
+
+    .logo-badge {
+        display: none;
+    }
+
+    .header-actions {
+        gap: 6px;
+    }
+
+    .header-actions .btn span {
+        display: none;
+    }
+
+    .header-actions .btn {
+        padding: 8px 12px;
+        font-size: 14px;
+        min-width: 40px;
+    }
+
+    /* Stack layout: Workspace Top, Controls Bottom */
+    .app-main {
+        display: flex;
+        flex-direction: column;
+        height: auto;
+        overflow: visible;
+    }
+
+    /* Workspace canvas container */
+    .workspace {
+        order: 1;
+        width: 100%;
+        padding: 12px;
+        min-height: 340px;
+        max-height: 55vh;
+        background: rgba(5, 8, 15, 0.95);
+        position: sticky;
+        top: 56px;
+        z-index: 50;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .canvas-toolbar {
+        top: 6px;
+        padding: 4px 10px;
+        gap: 8px;
+    }
+
+    .toolbar-info {
+        font-size: 10px;
+    }
+
+    #memeCanvas {
+        max-height: calc(55vh - 70px);
+        touch-action: none; /* Prevent scroll while dragging on canvas */
+    }
+
+    /* Sidebar Controls */
+    .sidebar {
+        order: 2;
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        max-height: none;
+    }
+
+    .sidebar-right {
+        order: 3;
+        border-left: none;
+    }
+
+    .sidebar-tabs {
+        position: sticky;
+        top: 0;
+        z-index: 40;
+        background: rgba(10, 16, 30, 0.95);
+        backdrop-filter: blur(12px);
+        padding: 6px;
+    }
+
+    .tab-btn {
+        padding: 8px 4px;
+        font-size: 11px;
+    }
+
+    .tab-content {
+        padding: 14px;
+    }
+
+    .templates-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        max-height: 320px;
+    }
+
+    .sticker-grid {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 6px;
+    }
+
+    .sticker-item {
+        font-size: 24px;
+    }
+
+    /* Touch-friendly inputs & buttons */
+    .form-control, .btn {
+        min-height: 44px;
+    }
+
+    .range-slider {
+        height: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .templates-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .workspace {
+        min-height: 280px;
+        max-height: 48vh;
+    }
+}
