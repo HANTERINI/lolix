@@ -1,0 +1,19 @@
+{
+  "name": "lolix-meme-generator",
+  "version": "1.0.0",
+  "description": "Ultra-modern HTML5 Meme Generator web app ready for Vercel deployment.",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve .",
+    "build": "echo 'Static site ready for Vercel deployment'"
+  },
+  "keywords": [
+    "meme",
+    "generator",
+    "canvas",
+    "vercel",
+    "web-app"
+  ],
+  "author": "HANTERINI",
+  "license": "MIT"
+}

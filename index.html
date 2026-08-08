@@ -1,0 +1,308 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор Мемов Pro — Создать мем онлайн</title>
+    <meta name="description" content="Ультимативный генератор мемов с шаблонами, стикерами, эффектом Deep Fry, настройкой шрифтов и экспортом в PNG / скопировать в буфер обмена.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Comic+Neue:wght@700&family=Impact&family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="app-header">
+        <div class="logo-container">
+            <div class="logo-icon">🔥</div>
+            <div class="logo-text">MEME CRAFT</div>
+            <span class="logo-badge">PRO v2.5</span>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-secondary" id="randomCaptionBtn" title="Сгенерировать случайную подпись">
+                <span>🎲 Случайный мем</span>
+            </button>
+            <button class="btn btn-secondary" id="openGalleryBtn" title="Моя галерея мемов">
+                <span>🖼️ Моя галерея</span>
+            </button>
+            <button class="btn btn-primary" id="copyClipboardBtn" title="Скопировать изображение в буфер обмена">
+                <span>📋 Скопировать</span>
+            </button>
+            <button class="btn btn-success" id="downloadMemeBtn" title="Скачать мем в высоком качестве">
+                <span>📥 Скачать PNG</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="app-main">
+        
+        <!-- Left Sidebar: Controls & Tools -->
+        <aside class="sidebar">
+            <nav class="sidebar-tabs">
+                <button class="tab-btn active" data-tab="templates">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    <span>Шаблоны</span>
+                </button>
+                <button class="tab-btn" data-tab="text">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    <span>Текст</span>
+                </button>
+                <button class="tab-btn" data-tab="stickers">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span>Стикеры</span>
+                </button>
+                <button class="tab-btn" data-tab="filters">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 010 4m-6 8a2 2 0 100-4m0 4a2 2 0 010-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 010-4m0 4v2m0-6V4"/></svg>
+                    <span>Фильтры</span>
+                </button>
+                <button class="tab-btn" data-tab="draw">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                    <span>Кисть</span>
+                </button>
+            </nav>
+
+            <!-- Tab 1: Templates -->
+            <div class="tab-content active" id="tab-templates">
+                <div class="upload-zone" id="uploadDropzone">
+                    <div class="upload-icon">📁</div>
+                    <div class="upload-title">Загрузить свое фото</div>
+                    <div class="upload-desc">Перетащите сюда файл или кликните</div>
+                    <input type="file" id="imageInput" accept="image/*" style="display: none;">
+                </div>
+
+                <div class="search-box">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    <input type="text" id="templateSearch" placeholder="Поиск шаблона (например, Drake, Doge)...">
+                </div>
+
+                <div class="category-list">
+                    <button class="cat-btn active" data-category="all">Все</button>
+                    <button class="cat-btn" data-category="classic">Классика</button>
+                    <button class="cat-btn" data-category="reaction">Реакции</button>
+                    <button class="cat-btn" data-category="cats">Коты & Животные</button>
+                </div>
+
+                <div class="panel-section">
+                    <div class="panel-title">Популярные шаблоны</div>
+                    <div class="templates-grid" id="templatesGrid">
+                        <!-- Templates rendered via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Text & Captions -->
+            <div class="tab-content" id="tab-text">
+                <div class="panel-section">
+                    <div class="panel-title">Быстрый текст</div>
+                    <div class="form-group">
+                        <label class="form-label">Верхний текст</label>
+                        <input type="text" class="form-control" id="topTextInput" placeholder="ВЕРХНИЙ ТЕКСТ...">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Нижний текст</label>
+                        <input type="text" class="form-control" id="bottomTextInput" placeholder="НИЖНИЙ ТЕКСТ...">
+                    </div>
+                    <button class="btn btn-secondary btn-full" id="addCustomTextBtn">
+                        <span>➕ Добавить произвольный блок текста</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tab 3: Stickers -->
+            <div class="tab-content" id="tab-stickers">
+                <div class="panel-section">
+                    <div class="panel-title">Кликните, чтобы добавить на мем</div>
+                    <div class="sticker-grid" id="stickerGrid">
+                        <!-- Stickers rendered via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 4: Image Filters -->
+            <div class="tab-content" id="tab-filters">
+                <div class="panel-section">
+                    <div class="panel-title">Пресеты</div>
+                    <button class="btn btn-danger btn-full" id="deepFryBtn" style="margin-bottom: 16px;">
+                        <span>🔥 DEEP FRY (Пережарить мем)</span>
+                    </button>
+                    
+                    <div class="form-group">
+                        <div class="form-label"><span>Яркость</span><span id="brightnessVal">100%</span></div>
+                        <input type="range" class="range-slider" id="filterBrightness" min="0" max="200" value="100">
+                    </div>
+                    <div class="form-group">
+                        <div class="form-label"><span>Контраст</span><span id="contrastVal">100%</span></div>
+                        <input type="range" class="range-slider" id="filterContrast" min="0" max="200" value="100">
+                    </div>
+                    <div class="form-group">
+                        <div class="form-label"><span>Насыщенность</span><span id="saturateVal">100%</span></div>
+                        <input type="range" class="range-slider" id="filterSaturate" min="0" max="300" value="100">
+                    </div>
+                    <div class="form-group">
+                        <div class="form-label"><span>Сепия</span><span id="sepiaVal">0%</span></div>
+                        <input type="range" class="range-slider" id="filterSepia" min="0" max="100" value="0">
+                    </div>
+                    <div class="form-group">
+                        <div class="form-label"><span>Черно-белый (Grayscale)</span><span id="grayscaleVal">0%</span></div>
+                        <input type="range" class="range-slider" id="filterGrayscale" min="0" max="100" value="0">
+                    </div>
+                    <button class="btn btn-secondary btn-full" id="resetFiltersBtn" style="margin-top: 12px;">
+                        <span>Сбросить все фильтры</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tab 5: Draw Brush -->
+            <div class="tab-content" id="tab-draw">
+                <div class="panel-section">
+                    <div class="panel-title">Режим рисования</div>
+                    <div class="form-group">
+                        <label class="form-label">Включить кисть</label>
+                        <button class="btn btn-secondary btn-full" id="toggleDrawBtn">
+                            <span>✏️ Включить рисователь</span>
+                        </button>
+                    </div>
+                    <div class="form-row form-group">
+                        <div>
+                            <label class="form-label">Цвет кисти</label>
+                            <div class="color-picker-wrapper">
+                                <input type="color" id="brushColor" value="#ff0055">
+                                <span id="brushColorHex" style="font-size:11px;">#ff0055</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="form-label">Размер (<span id="brushSizeVal">6px</span>)</label>
+                            <input type="range" class="range-slider" id="brushSize" min="1" max="50" value="6">
+                        </div>
+                    </div>
+                    <button class="btn btn-danger btn-full" id="clearDrawBtn">
+                        <span>🗑️ Очистить рисунки</span>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Center Workspace Canvas -->
+        <section class="workspace">
+            <div class="canvas-toolbar">
+                <span class="toolbar-info" id="canvasDimensions">1200 x 1200 px</span>
+                <button class="btn btn-secondary btn-icon" id="zoomOutBtn" title="Уменьшить">-</button>
+                <span class="toolbar-info" id="zoomLevel">100%</span>
+                <button class="btn btn-secondary btn-icon" id="zoomInBtn" title="Увеличить">+</button>
+                <button class="btn btn-secondary" id="resetViewBtn">Сбросить масштаб</button>
+            </div>
+
+            <div class="canvas-wrapper" id="canvasWrapper">
+                <canvas id="memeCanvas" width="800" height="800"></canvas>
+            </div>
+        </section>
+
+        <!-- Right Sidebar: Properties & Layer Inspector -->
+        <aside class="sidebar sidebar-right">
+            <div class="tab-content active" style="display: block;">
+                <div class="panel-section">
+                    <div class="panel-title">Свойства выделенного объекта</div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Шрифт</label>
+                        <select class="form-control" id="propFontFamily">
+                            <option value="Impact" selected>Impact (Классический мем)</option>
+                            <option value="Anton">Anton (Bold display)</option>
+                            <option value="Montserrat">Montserrat (Modern Heavy)</option>
+                            <option value="Bebas Neue">Bebas Neue (Tall Condensed)</option>
+                            <option value="Comic Neue">Comic Neue (Humor)</option>
+                            <option value="Arial">Arial (Standard)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="form-label">
+                            <span>Размер шрифта</span>
+                            <span id="propFontSizeVal">48px</span>
+                        </div>
+                        <input type="range" class="range-slider" id="propFontSize" min="16" max="140" value="48">
+                    </div>
+
+                    <div class="form-row form-group">
+                        <div>
+                            <label class="form-label">Цвет текста</label>
+                            <div class="color-picker-wrapper">
+                                <input type="color" id="propTextColor" value="#ffffff">
+                                <span style="font-size:11px;">Текст</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="form-label">Цвет обводки</label>
+                            <div class="color-picker-wrapper">
+                                <input type="color" id="propStrokeColor" value="#000000">
+                                <span style="font-size:11px;">Контур</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="form-label">
+                            <span>Толщина контура</span>
+                            <span id="propStrokeWidthVal">4px</span>
+                        </div>
+                        <input type="range" class="range-slider" id="propStrokeWidth" min="0" max="20" value="4">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Режим регистра</label>
+                        <button class="btn btn-secondary btn-full" id="propUppercaseBtn">
+                            <span>🔤 ВСЕ БУКВЫ БОЛЬШИЕ</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="panel-section">
+                    <div class="panel-title">Управление слоями</div>
+                    <div class="form-row" style="margin-bottom: 12px;">
+                        <button class="btn btn-secondary" id="layerUpBtn">⬆️ Выше</button>
+                        <button class="btn btn-secondary" id="layerDownBtn">⬇️ Ниже</button>
+                    </div>
+                    <button class="btn btn-danger btn-full" id="deleteLayerBtn">
+                        <span>🗑️ Удалить выбранный слой</span>
+                    </button>
+                </div>
+
+                <div class="panel-section">
+                    <div class="panel-title">Список слоев</div>
+                    <div id="layersList">
+                        <!-- Layers rendered dynamically -->
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+    </main>
+
+    <!-- Modal: Saved Gallery -->
+    <div class="modal-overlay" id="galleryModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Моя галерея сохраненных мемов</h3>
+                <button class="modal-close" id="closeGalleryModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="gallery-grid" id="galleryGrid">
+                    <!-- Saved memes grid -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Application Scripts -->
+    <script src="templates.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

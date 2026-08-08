@@ -1,0 +1,11 @@
+# System & Scratch Files
+*.py
+*.log
+.DS_Store
+Thumbs.db
+
+# Dependencies & Build
+node_modules/
+.vercel
+dist/
+build/
