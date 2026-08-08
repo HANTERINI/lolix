@@ -479,6 +479,14 @@ document.addEventListener('DOMContentLoaded', () => {
             dragOffsetX = mouseX - foundLayer.x;
             dragOffsetY = mouseY - foundLayer.y;
             updateInspectorPanel(foundLayer);
+            
+            // On mobile screen (< 900px), automatically switch to Properties tab when tapping a layer
+            if (window.innerWidth <= 900) {
+                const propsTab = document.getElementById('mobilePropsTab');
+                if (propsTab && !propsTab.classList.contains('active')) {
+                    propsTab.click();
+                }
+            }
         } else {
             activeLayerId = null;
         }
